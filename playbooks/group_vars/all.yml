@@ -2,5 +2,8 @@
 zookeeper_data_dir: /var/lib/zookeeper
 zookeeper_client_port: 2181
 
+# options 'docker,mesos' or 'mesos'
+# note 'docker,mesos' not working yet ... need to install docker first
+slave_abilities: 'mesos'
 
-slave_abilities: 'docker,mesos'
+slave_timeout: 15mins
