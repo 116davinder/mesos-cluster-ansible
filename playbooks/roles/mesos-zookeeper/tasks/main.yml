@@ -1,0 +1,45 @@
+---
+
+- name: Installing Mesos Zookeeper | CentOS
+  yum:
+    name: "mesosphere-zookeeper"
+    state: present
+
+- name: Generating Zookeeper Server ID
+  shell: "echo {{ ansible_ssh_host }} | cut -d . -f 4"
+  register: zookeeper_server_id
+
+- name: Adding Zookeeper ID File | /var/lib/zookeeper/myid
+  template:
+    dest: /var/lib/zookeeper/myid
+    src: myid.j2
+
+- name: Removing Old Zookeeper Configurations | zoo.cfg
+  file:
+    dest: /etc/zookeeper/conf/zoo.cfg
+    state: absent
+
+- name: Making Zookeeper Configurations | zoo.cfg
+  shell: "echo server.$(echo {{ item }} | cut -d . -f 4)={{ item }}:2888:3888 >> /etc/zookeeper/conf/zoo.cfg "
+  with_items:
+    - "{{ groups['zookeeper'] }}"
+
+- name: Creating Zookeeper DataDir | {{ zookeeper_data_dir }}
+  file:
+    dest: "{{ zookeeper_data_dir }}"
+    state: directory
+
+- name: Adding Zookeeper | DataDir | Client Port
+  lineinfile:
+    dest: /etc/zookeeper/conf/zoo.cfg
+    state: present
+    line: "{{ item }}"
+  with_items:
+    - "dataDir={{ zookeeper_data_dir }}"
+    - "clientPort={{ zookeeper_client_port }}"
+
+- name: Ensuring Zookeeper State| Running
+  service:
+    name: zookeeper
+    state: restarted
+    enabled: true

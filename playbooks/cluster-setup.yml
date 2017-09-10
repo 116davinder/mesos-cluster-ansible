@@ -1,0 +1,36 @@
+---
+
+- name: Applying Common Tasks
+  hosts: common
+  roles:
+    - common
+    - common-jdk
+
+- name: Creating Zookeeper Vars
+  hosts: all
+  roles:
+    - zookeeper-vars
+
+- name: Installing Zookeeper
+  gather_facts: true
+  hosts: zookeeper
+  roles:
+    - mesos-zookeeper
+
+- name: Installing Mesos | Master
+  gather_facts: true
+  hosts: master
+  roles:
+    - mesos-master
+
+- name: Installing Mesos | Marathon
+  gather_facts: true
+  hosts: master
+  roles:
+    - mesos-marathon
+
+- name: Installing Mesos | Slave
+  hosts: slave
+  gather_facts: true
+  roles:
+    - mesos-slave

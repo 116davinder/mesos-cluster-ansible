@@ -1,0 +1,6 @@
+---
+# options 'docker,mesos' or 'mesos'
+# note 'docker,mesos' not working yet ... need to install docker first
+slave_abilities: 'mesos'
+
+slave_timeout: 15mins

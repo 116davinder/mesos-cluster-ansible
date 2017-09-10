@@ -1,0 +1,44 @@
+---
+
+- name: Installing Mesos | CentOS
+  yum:
+    name: "mesos"
+    state: present
+
+
+- name: Inserting Slaves Configs
+  lineinfile:
+    dest: "{{ item.dest }}"
+    state: present
+    line: "{{ item.line }}"
+    create: true
+  with_items:
+    - { dest: '/etc/mesos-slave/containerizers', line: '{{ slave_abilities }}'}
+    - { dest: '/etc/mesos-slave/executor_registration_timeout', line: '{{ slave_timeout }}'}
+
+- name: Adding Zookeeper ID File | /etc/mesos/zk
+  template:
+    dest: /etc/mesos/zk
+    src: zk.j2
+
+- name: Adding Hostname and IP
+  lineinfile:
+    dest: "{{ item }}"
+    line: "{{ ansible_ssh_host }}"
+    state: present
+    create: true
+  with_items:
+    - /etc/mesos-slave/hostname
+    - /etc/mesos-slave/ip
+
+- name: Stoping Mesos | Master
+  service:
+    name: mesos-master
+    state: stopped
+    enabled: false
+
+- name: Starting Mesos | Slave
+  service:
+    name: mesos-slave
+    state: restarted
+    enabled: true

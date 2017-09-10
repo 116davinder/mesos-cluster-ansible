@@ -1,0 +1,18 @@
+---
+
+- name: Installing Repository | Mesos | CentOS
+  yum:
+    name: "http://repos.mesosphere.io/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm"
+    state: present
+
+- name: Installing Common Packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc
+    - tar
+    - wget
+    - git
+    - epel-release
+    - net-tools

@@ -1,0 +1,13 @@
+---
+
+## For Zookeeper String with port number
+- name: Get Zookeeper FQDNs
+  set_fact:
+    zoo_item_withport: "{{ item }}:2181"
+  with_items:
+    - "{{ groups['zookeeper'] }}"
+  register: zookeeper_hosts_withport
+
+- name: Make Zookeeper String
+  set_fact:
+    zookeeper_withport_string: "{{ zookeeper_hosts_withport.results | map(attribute='ansible_facts.zoo_item_withport') | list | join(',')}}"

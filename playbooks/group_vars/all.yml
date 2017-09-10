@@ -1,0 +1,6 @@
+---
+zookeeper_data_dir: /var/lib/zookeeper
+zookeeper_client_port: 2181
+
+
+slave_abilities: 'docker,mesos'

@@ -1,0 +1,26 @@
+---
+
+- name: Installing Marathon | CentOS
+  yum:
+    name: "marathon"
+    state: present
+
+- name: Creating Marathon Config Directory
+  file:
+    dest: /etc/marathon/conf
+    state: directory
+
+- name: Adding Hostname and IP
+  lineinfile:
+    dest: "{{ item }}"
+    line: "{{ ansible_ssh_host }}"
+    state: present
+    create: true
+  with_items:
+    - /etc/marathon/conf/hostname
+
+- name: Starting Marathon | Master
+  service:
+    name: marathon
+    state: started
+    enabled: true
